@@ -1,0 +1,50 @@
+[
+  {
+    "slug": "product_daily",
+    "name": "商品日经营数据（规范源字段子集）",
+    "date_field": "dt",
+    "key_fields": ["product_id"],
+    "retention_days": 180,
+    "fields": [
+      {"name": "daily_id", "type": "string", "required": true, "max_length": 32},
+      {"name": "dt", "type": "date", "required": true, "dimension": true},
+      {"name": "product_id", "type": "string", "required": true, "dimension": true, "max_length": 120},
+      {"name": "product_name", "type": "string", "max_length": 1000},
+      {"name": "channel", "type": "string", "dimension": true, "max_length": 120},
+      {"name": "shop_name", "type": "string", "dimension": true, "max_length": 120},
+      {"name": "category", "type": "string", "dimension": true, "max_length": 500},
+      {"name": "owner_person", "type": "string", "dimension": true, "max_length": 120},
+      {"name": "pay_amount", "type": "decimal"},
+      {"name": "net_sales_amount", "type": "decimal"},
+      {"name": "refund_amount", "type": "decimal"},
+      {"name": "goods_cost", "type": "decimal"},
+      {"name": "net_goods_cost", "type": "decimal"},
+      {"name": "promotion_cost", "type": "decimal"},
+      {"name": "platform_cost", "type": "decimal"},
+      {"name": "ship_fee", "type": "decimal"},
+      {"name": "sales_fee", "type": "decimal"},
+      {"name": "custom_fee", "type": "decimal"},
+      {"name": "gross_profit", "type": "decimal"},
+      {"name": "profit_amount", "type": "decimal"},
+      {"name": "profit_pay_est", "type": "decimal"},
+      {"name": "sales_qty", "type": "decimal"}
+    ]
+  },
+  {
+    "slug": "inventory_daily",
+    "name": "库存日快照（假定结构模板）",
+    "date_field": "snapshot_date",
+    "key_fields": ["sku", "warehouse"],
+    "retention_days": 180,
+    "fields": [
+      {"name": "snapshot_date", "type": "date", "required": true, "dimension": true},
+      {"name": "sku", "type": "string", "required": true, "dimension": true, "max_length": 120},
+      {"name": "warehouse", "type": "string", "required": true, "dimension": true, "max_length": 120},
+      {"name": "available_qty", "type": "integer"},
+      {"name": "reserved_qty", "type": "integer"},
+      {"name": "unit_cost", "type": "decimal"},
+      {"name": "observed_at", "type": "datetime"},
+      {"name": "active", "type": "boolean"}
+    ]
+  }
+]

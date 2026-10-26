@@ -1,0 +1,505 @@
+[
+  {
+    "slug": "ds_dashboard_summary",
+    "name": "经营看板 · 经营概览",
+    "dataset_slug": "ads_product_dashboard_daily",
+    "definition": {
+      "aggregates": [
+        {
+          "field": "pay_amount",
+          "op": "sum",
+          "alias": "totalSalesAmount"
+        },
+        {
+          "field": "net_sales_amount",
+          "op": "sum",
+          "alias": "netSalesAmount"
+        },
+        {
+          "field": "gross_profit",
+          "op": "sum",
+          "alias": "grossProfit"
+        },
+        {
+          "field": "profit_amount",
+          "op": "sum",
+          "alias": "netProfit"
+        },
+        {
+          "field": "net_goods_cost",
+          "op": "sum",
+          "alias": "goodsCost"
+        },
+        {
+          "field": "promotion_cost",
+          "op": "sum",
+          "alias": "adSpend"
+        },
+        {
+          "field": "platform_cost",
+          "op": "sum",
+          "alias": "platformFees"
+        },
+        {
+          "field": "refund_amount",
+          "op": "sum",
+          "alias": "totalRefundAmount"
+        },
+        {
+          "field": "sales_qty",
+          "op": "sum",
+          "alias": "unitsSold"
+        },
+        {
+          "field": "ship_fee",
+          "op": "sum",
+          "alias": "shipFee"
+        },
+        {
+          "field": "sales_fee",
+          "op": "sum",
+          "alias": "salesFee"
+        },
+        {
+          "field": "custom_fee",
+          "op": "sum",
+          "alias": "customFee"
+        },
+        {
+          "op": "count",
+          "alias": "recordCount"
+        }
+      ],
+      "formulas": [
+        {
+          "alias": "grossMargin",
+          "expression": "grossProfit / netSalesAmount",
+          "decimal_places": 6
+        },
+        {
+          "alias": "netMargin",
+          "expression": "netProfit / netSalesAmount",
+          "decimal_places": 6
+        },
+        {
+          "alias": "refundRate",
+          "expression": "totalRefundAmount / totalSalesAmount",
+          "decimal_places": 6
+        },
+        {
+          "alias": "goodsCostShare",
+          "expression": "goodsCost / netSalesAmount",
+          "decimal_places": 6
+        },
+        {
+          "alias": "adSpendRatio",
+          "expression": "adSpend / netSalesAmount",
+          "decimal_places": 6
+        },
+        {
+          "alias": "platformFeesShare",
+          "expression": "platformFees / netSalesAmount",
+          "decimal_places": 6
+        },
+        {
+          "alias": "shipFeeShare",
+          "expression": "shipFee / netSalesAmount",
+          "decimal_places": 6
+        },
+        {
+          "alias": "salesFeeShare",
+          "expression": "salesFee / netSalesAmount",
+          "decimal_places": 6
+        },
+        {
+          "alias": "customFeeShare",
+          "expression": "customFee / netSalesAmount",
+          "decimal_places": 6
+        },
+        {
+          "alias": "listedCostTotal",
+          "expression": "goodsCost + adSpend + platformFees + shipFee + salesFee + customFee",
+          "decimal_places": 6
+        }
+      ],
+      "require_complete": false
+    },
+    "allowed_filter_fields": [
+      "channel",
+      "shop_name",
+      "owner_person"
+    ],
+    "max_limit": 1,
+    "enabled": true,
+    "revision": 0
+  },
+  {
+    "slug": "ds_dashboard_trend",
+    "name": "经营看板 · 每日趋势",
+    "dataset_slug": "ads_product_dashboard_daily",
+    "definition": {
+      "group_by": [
+        "dt"
+      ],
+      "aggregates": [
+        {
+          "field": "pay_amount",
+          "op": "sum",
+          "alias": "totalSalesAmount"
+        },
+        {
+          "field": "net_sales_amount",
+          "op": "sum",
+          "alias": "netSalesAmount"
+        },
+        {
+          "field": "gross_profit",
+          "op": "sum",
+          "alias": "grossProfit"
+        },
+        {
+          "field": "profit_amount",
+          "op": "sum",
+          "alias": "netProfit"
+        }
+      ],
+      "formulas": [
+        {
+          "alias": "grossMargin",
+          "expression": "grossProfit / netSalesAmount",
+          "decimal_places": 6
+        },
+        {
+          "alias": "netMargin",
+          "expression": "netProfit / netSalesAmount",
+          "decimal_places": 6
+        }
+      ],
+      "order_by": [
+        {
+          "field": "dt",
+          "direction": "asc"
+        }
+      ],
+      "require_complete": false
+    },
+    "allowed_filter_fields": [
+      "channel",
+      "shop_name",
+      "owner_person"
+    ],
+    "max_limit": 180,
+    "enabled": true,
+    "revision": 0
+  },
+  {
+    "slug": "ds_dashboard_channels",
+    "name": "经营看板 · 渠道对比",
+    "dataset_slug": "ads_product_dashboard_daily",
+    "definition": {
+      "group_by": [
+        "channel"
+      ],
+      "aggregates": [
+        {
+          "field": "pay_amount",
+          "op": "sum",
+          "alias": "totalTransactionAmount"
+        },
+        {
+          "field": "net_sales_amount",
+          "op": "sum",
+          "alias": "netSalesAmount"
+        },
+        {
+          "field": "profit_amount",
+          "op": "sum",
+          "alias": "netProfit"
+        }
+      ],
+      "formulas": [
+        {
+          "alias": "netMargin",
+          "expression": "netProfit / netSalesAmount",
+          "decimal_places": 6
+        }
+      ],
+      "order_by": [
+        {
+          "field": "netSalesAmount",
+          "direction": "desc"
+        }
+      ],
+      "require_complete": false
+    },
+    "allowed_filter_fields": [
+      "channel",
+      "shop_name",
+      "owner_person"
+    ],
+    "max_limit": 500,
+    "enabled": true,
+    "revision": 0
+  },
+  {
+    "slug": "ds_dashboard_shops",
+    "name": "经营看板 · 店铺 TOP5",
+    "dataset_slug": "ads_product_dashboard_daily",
+    "definition": {
+      "group_by": [
+        "channel",
+        "shop_name"
+      ],
+      "aggregates": [
+        {
+          "field": "pay_amount",
+          "op": "sum",
+          "alias": "totalTransactionAmount"
+        },
+        {
+          "field": "net_sales_amount",
+          "op": "sum",
+          "alias": "netSalesAmount"
+        },
+        {
+          "field": "profit_amount",
+          "op": "sum",
+          "alias": "netProfit"
+        }
+      ],
+      "formulas": [
+        {
+          "alias": "netMargin",
+          "expression": "netProfit / netSalesAmount",
+          "decimal_places": 6
+        }
+      ],
+      "order_by": [
+        {
+          "field": "netSalesAmount",
+          "direction": "desc"
+        }
+      ],
+      "require_complete": false
+    },
+    "allowed_filter_fields": [
+      "channel",
+      "shop_name",
+      "owner_person"
+    ],
+    "max_limit": 5,
+    "enabled": true,
+    "revision": 0
+  },
+  {
+    "slug": "ds_dashboard_categories",
+    "name": "经营看板 · 品类 TOP5",
+    "dataset_slug": "ads_product_dashboard_daily",
+    "definition": {
+      "group_by": [
+        "category"
+      ],
+      "aggregates": [
+        {
+          "field": "pay_amount",
+          "op": "sum",
+          "alias": "totalTransactionAmount"
+        },
+        {
+          "field": "net_sales_amount",
+          "op": "sum",
+          "alias": "netSalesAmount"
+        },
+        {
+          "field": "profit_amount",
+          "op": "sum",
+          "alias": "netProfit"
+        }
+      ],
+      "formulas": [
+        {
+          "alias": "netMargin",
+          "expression": "netProfit / netSalesAmount",
+          "decimal_places": 6
+        }
+      ],
+      "order_by": [
+        {
+          "field": "netSalesAmount",
+          "direction": "desc"
+        }
+      ],
+      "require_complete": false
+    },
+    "allowed_filter_fields": [
+      "channel",
+      "shop_name",
+      "owner_person"
+    ],
+    "max_limit": 5,
+    "enabled": true,
+    "revision": 0
+  },
+  {
+    "slug": "ds_dashboard_filter_channels",
+    "name": "经营看板 · 渠道选项",
+    "dataset_slug": "ads_product_dashboard_daily",
+    "definition": {
+      "group_by": [
+        "channel"
+      ],
+      "order_by": [
+        {
+          "field": "channel",
+          "direction": "asc"
+        }
+      ],
+      "require_complete": false
+    },
+    "allowed_filter_fields": [
+      "channel",
+      "shop_name",
+      "owner_person"
+    ],
+    "max_limit": 500,
+    "enabled": true,
+    "revision": 0
+  },
+  {
+    "slug": "ds_dashboard_filter_shops",
+    "name": "经营看板 · 店铺选项",
+    "dataset_slug": "ads_product_dashboard_daily",
+    "definition": {
+      "group_by": [
+        "channel",
+        "shop_name"
+      ],
+      "order_by": [
+        {
+          "field": "channel",
+          "direction": "asc"
+        },
+        {
+          "field": "shop_name",
+          "direction": "asc"
+        }
+      ],
+      "require_complete": false
+    },
+    "allowed_filter_fields": [
+      "channel",
+      "shop_name",
+      "owner_person"
+    ],
+    "max_limit": 500,
+    "enabled": true,
+    "revision": 0
+  },
+  {
+    "slug": "ds_dashboard_filter_owners",
+    "name": "经营看板 · 负责人选项",
+    "dataset_slug": "ads_product_dashboard_daily",
+    "definition": {
+      "group_by": [
+        "owner_person"
+      ],
+      "order_by": [
+        {
+          "field": "owner_person",
+          "direction": "asc"
+        }
+      ],
+      "require_complete": false
+    },
+    "allowed_filter_fields": [
+      "channel",
+      "shop_name",
+      "owner_person"
+    ],
+    "max_limit": 500,
+    "enabled": true,
+    "revision": 0
+  },
+  {
+    "slug": "ds_dashboard_quality",
+    "name": "经营看板 · 指标完整性",
+    "dataset_slug": "ads_product_dashboard_daily",
+    "definition": {
+      "aggregates": [
+        {
+          "field": "pay_amount",
+          "op": "count",
+          "alias": "totalSalesAmountCount"
+        },
+        {
+          "field": "net_sales_amount",
+          "op": "count",
+          "alias": "netSalesAmountCount"
+        },
+        {
+          "field": "gross_profit",
+          "op": "count",
+          "alias": "grossProfitCount"
+        },
+        {
+          "field": "profit_amount",
+          "op": "count",
+          "alias": "netProfitCount"
+        },
+        {
+          "field": "net_goods_cost",
+          "op": "count",
+          "alias": "goodsCostCount"
+        },
+        {
+          "field": "promotion_cost",
+          "op": "count",
+          "alias": "adSpendCount"
+        },
+        {
+          "field": "platform_cost",
+          "op": "count",
+          "alias": "platformFeesCount"
+        },
+        {
+          "field": "refund_amount",
+          "op": "count",
+          "alias": "totalRefundAmountCount"
+        },
+        {
+          "field": "sales_qty",
+          "op": "count",
+          "alias": "unitsSoldCount"
+        },
+        {
+          "field": "ship_fee",
+          "op": "count",
+          "alias": "shipFeeCount"
+        },
+        {
+          "field": "sales_fee",
+          "op": "count",
+          "alias": "salesFeeCount"
+        },
+        {
+          "field": "custom_fee",
+          "op": "count",
+          "alias": "customFeeCount"
+        },
+        {
+          "op": "count",
+          "alias": "recordCount"
+        }
+      ],
+      "require_complete": false
+    },
+    "allowed_filter_fields": [
+      "channel",
+      "shop_name",
+      "owner_person"
+    ],
+    "max_limit": 1,
+    "enabled": true,
+    "revision": 0
+  }
+]

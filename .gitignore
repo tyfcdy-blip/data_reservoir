@@ -1,0 +1,45 @@
+.env
+.env.*
+!.env.example
+.venv/
+.local/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+dist/
+*.pyc
+
+# 运行配置与凭据只保存在各环境中；仅提交字段定义和脱敏示例。
+/config/*
+!/config/*.example.json
+!/config/product_day.dataset.json
+/evidence/*
+!/evidence/.gitkeep
+
+# 历史测试产物不作为源码上传。
+*.log
+*.xml
+*.png
+/tests/**/browser-result.json
+/tests/**/scale-result.json
+/tests/**/pytest-*.txt
+
+# 数据库备份、发布包、私钥及用户提供的文档不进入 Git。
+*.dump
+*.db
+*.sqlite
+*.sqlite3
+*.backup
+*.bak
+*.sql.gz
+*.zip
+*.tar
+*.tar.gz
+*.pem
+*.key
+*.p12
+*.pfx
+*.docx
+*.doc
+Thumbs.db
+.DS_Store

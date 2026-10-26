@@ -1,0 +1,35 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "muyaju-data-service"
+version = "1.6.0"
+description = "独立多数据集接入、存储、范围与聚合查询服务"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "fastapi==0.159.1",
+    "uvicorn==0.54.0",
+    "pydantic==2.14.1",
+    "pydantic-settings>=2.8,<3",
+    "psycopg[binary]==3.3.6",
+    "httpx==0.28.1",
+    "tzdata>=2025.1",
+    "cryptography>=46,<49",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.3,<10", "ruff>=0.11,<1"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["data_service"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 110
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "B"]

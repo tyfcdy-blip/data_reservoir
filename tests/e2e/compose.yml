@@ -1,0 +1,60 @@
+name: muyaju-data-service-e2e
+x-app: &app
+  image: muyaju-data-service:1.3.0
+  env_file: ../../.local/e2e.env
+  environment:
+    DS_DATABASE_URL: ${DS_DOCKER_DATABASE_URL:?}
+    DS_SOURCE_CONFIG_PATH: /app/config/sources.json
+    DS_DATASET_CONFIG_PATH: /app/config/datasets.json
+    DS_ALLOWED_SOURCE_HOSTS: '["source"]'
+    DS_SCHEDULE_ENABLED: "false"
+  volumes:
+    - ../../.local/e2e-config:/app/config:ro
+services:
+  db:
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_DB: standalone_e2e_test
+      POSTGRES_USER: data_service
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+    volumes:
+      - e2e-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U data_service -d standalone_e2e_test"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  source:
+    image: muyaju-data-service:1.3.0
+    env_file: ../../.local/e2e.env
+    command: ["python", "/test/source_server.py"]
+    volumes:
+      - ./source_server.py:/test/source_server.py:ro
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket;socket.create_connection(('127.0.0.1',8001),3).close()"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  init:
+    <<: *app
+    command: ["python", "-m", "data_service.cli", "init"]
+    depends_on:
+      db: {condition: service_healthy}
+  api:
+    <<: *app
+    ports: ["127.0.0.1:18090:8000"]
+    depends_on:
+      init: {condition: service_completed_successfully}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready',timeout=3)"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  worker:
+    <<: *app
+    command: ["python", "-m", "data_service.worker"]
+    depends_on:
+      init: {condition: service_completed_successfully}
+      source: {condition: service_healthy}
+volumes:
+  e2e-db:

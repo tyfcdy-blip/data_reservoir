@@ -1,0 +1,411 @@
+{
+  "slug": "ads_product_dashboard_daily",
+  "name": "商品驾驶舱日表",
+  "date_field": "dt",
+  "key_fields": [
+    "daily_id"
+  ],
+  "fields": [
+    {
+      "name": "daily_id",
+      "type": "string",
+      "description": "稳定商品日行ID；LOWER(MD5(daily_id_v1规范化数据自然日+商品ID))",
+      "required": true,
+      "dimension": false,
+      "max_length": 10000
+    },
+    {
+      "name": "dt",
+      "type": "date",
+      "description": "数据日期；daily_id按其自然日部分计算",
+      "required": true,
+      "dimension": true,
+      "max_length": 255
+    },
+    {
+      "name": "product_id",
+      "type": "string",
+      "description": "商品ID；与数据自然日共同构成已确认业务唯一键",
+      "required": true,
+      "dimension": true,
+      "max_length": 10000
+    },
+    {
+      "name": "product_name",
+      "type": "string",
+      "description": "商品名称",
+      "required": false,
+      "dimension": true,
+      "max_length": 10000
+    },
+    {
+      "name": "product_image",
+      "type": "string",
+      "description": "商品图片",
+      "required": false,
+      "dimension": false,
+      "max_length": 10000
+    },
+    {
+      "name": "product_tag",
+      "type": "string",
+      "description": "商品标签",
+      "required": false,
+      "dimension": true,
+      "max_length": 10000
+    },
+    {
+      "name": "channel",
+      "type": "string",
+      "description": "渠道",
+      "required": false,
+      "dimension": true,
+      "max_length": 10000
+    },
+    {
+      "name": "shop_name",
+      "type": "string",
+      "description": "店铺名称",
+      "required": false,
+      "dimension": true,
+      "max_length": 10000
+    },
+    {
+      "name": "category",
+      "type": "string",
+      "description": "类目",
+      "required": false,
+      "dimension": true,
+      "max_length": 10000
+    },
+    {
+      "name": "owner_person",
+      "type": "string",
+      "description": "负责人",
+      "required": false,
+      "dimension": true,
+      "max_length": 10000
+    },
+    {
+      "name": "pay_amount",
+      "type": "decimal",
+      "description": "支付金额",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "net_sales_amount",
+      "type": "decimal",
+      "description": "净销售额",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "sales_qty",
+      "type": "decimal",
+      "description": "销售件数",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "aov",
+      "type": "decimal",
+      "description": "客单价",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "real_aov",
+      "type": "decimal",
+      "description": "真实客单价",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "refund_amount",
+      "type": "decimal",
+      "description": "退款金额",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "refund_qty",
+      "type": "decimal",
+      "description": "退款件数",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "refund_rate",
+      "type": "decimal",
+      "description": "退款率",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "shipped_refund_rate",
+      "type": "decimal",
+      "description": "已发货退款率",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "shipped_refund_amount_ratio",
+      "type": "decimal",
+      "description": "已发货退款金额占比",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "return_rate",
+      "type": "decimal",
+      "description": "退货率",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "goods_cost",
+      "type": "decimal",
+      "description": "货品成本",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "net_goods_cost",
+      "type": "decimal",
+      "description": "净货品成本",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "goods_cost_ratio",
+      "type": "decimal",
+      "description": "货品成本占比",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "net_goods_cost_ratio",
+      "type": "decimal",
+      "description": "净货品成本占比",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "promotion_cost",
+      "type": "decimal",
+      "description": "推广花费",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "promotion_cost_ratio",
+      "type": "decimal",
+      "description": "推广花费占比",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "promotion_cost_net_sales_ratio",
+      "type": "decimal",
+      "description": "推广花费占净销售额比例",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "promotion_cost_net_ship_amount_ratio",
+      "type": "decimal",
+      "description": "推广花费占净发货金额比例",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "platform_cost",
+      "type": "decimal",
+      "description": "平台花费",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "platform_cost_ratio",
+      "type": "decimal",
+      "description": "平台花费占比",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "ship_fee",
+      "type": "decimal",
+      "description": "发货费用",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "sales_fee",
+      "type": "decimal",
+      "description": "销售费用",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "custom_fee",
+      "type": "decimal",
+      "description": "自定义费用",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "custom_fee_ratio",
+      "type": "decimal",
+      "description": "自定义费用占比",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "absolute_shared_ratio",
+      "type": "decimal",
+      "description": "绝对公摊占比",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "gross_profit",
+      "type": "decimal",
+      "description": "毛利额",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "gross_profit_rate",
+      "type": "decimal",
+      "description": "毛利率",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "profit_amount",
+      "type": "decimal",
+      "description": "利润额",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "profit_rate",
+      "type": "decimal",
+      "description": "利润率",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "tao_product_exp_score",
+      "type": "decimal",
+      "description": "淘系商品体验分",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "product_exp_score",
+      "type": "string",
+      "description": "商品体验分",
+      "required": false,
+      "dimension": false,
+      "max_length": 10000
+    },
+    {
+      "name": "shop_overall_exp_score",
+      "type": "string",
+      "description": "店铺综合体验分",
+      "required": false,
+      "dimension": false,
+      "max_length": 10000
+    },
+    {
+      "name": "trade_in_self_subsidy_bridge",
+      "type": "decimal",
+      "description": "以旧换新自补平台过桥",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "merchant_subsidy",
+      "type": "decimal",
+      "description": "商家出资补贴",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "profit_est",
+      "type": "decimal",
+      "description": "利润（预估）",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "profit_pay_est",
+      "type": "decimal",
+      "description": "利润(支付预估)",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "profit_rate_est_new",
+      "type": "decimal",
+      "description": "利润率（预估）（新）",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "profit_rate_pay_est_new",
+      "type": "decimal",
+      "description": "利润率（支付预估）（新）",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "listing_time",
+      "type": "string",
+      "description": "上架时间",
+      "required": false,
+      "dimension": false,
+      "max_length": 10000
+    }
+  ],
+  "retention_days": 180
+}

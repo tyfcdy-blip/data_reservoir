@@ -1,0 +1,10 @@
+* text=auto
+*.py text eol=lf
+*.sh text eol=lf
+*.sql text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+Dockerfile text eol=lf
+# 首次导入保留现有运行源码与 SQL 字节，便于和已验证镜像核对。
+/data_service/** -text
+/docs/*.sql -text

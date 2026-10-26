@@ -1,0 +1,267 @@
+{
+  "slug": "product_day",
+  "name": "商品日事实表",
+  "date_field": "dt",
+  "key_fields": [
+    "product_day_id"
+  ],
+  "fields": [
+    {
+      "name": "product_day_id",
+      "type": "string",
+      "description": "唯一行标识（业务日期_商品ID），作为本表业务唯一键；来源重跑保持一致。",
+      "required": true,
+      "dimension": false,
+      "max_length": 512
+    },
+    {
+      "name": "dt",
+      "type": "date",
+      "description": "北京时间业务自然日，用于按日同步及日期范围查询。",
+      "required": true,
+      "dimension": true,
+      "max_length": 255
+    },
+    {
+      "name": "product_id",
+      "type": "string",
+      "description": "商品ID，按文本保存并保留前导零。",
+      "required": true,
+      "dimension": true,
+      "max_length": 255
+    },
+    {
+      "name": "product_name",
+      "type": "string",
+      "description": "商品名称，按来源返回值保存。",
+      "required": false,
+      "dimension": true,
+      "max_length": 2000
+    },
+    {
+      "name": "product_image",
+      "type": "string",
+      "description": "商品主图地址。",
+      "required": false,
+      "dimension": false,
+      "max_length": 4096
+    },
+    {
+      "name": "product_tag",
+      "type": "string",
+      "description": "商品标签。",
+      "required": false,
+      "dimension": true,
+      "max_length": 2000
+    },
+    {
+      "name": "channel",
+      "type": "string",
+      "description": "渠道。",
+      "required": false,
+      "dimension": true,
+      "max_length": 255
+    },
+    {
+      "name": "shop_name",
+      "type": "string",
+      "description": "店铺名称。",
+      "required": false,
+      "dimension": true,
+      "max_length": 500
+    },
+    {
+      "name": "listing_time",
+      "type": "string",
+      "description": "商品上架时间，保留来源原始文本，不推测时区。",
+      "required": false,
+      "dimension": false,
+      "max_length": 128
+    },
+    {
+      "name": "owner",
+      "type": "string",
+      "description": "负责人，来源取括号前第一个人名，按返回值保存。",
+      "required": false,
+      "dimension": true,
+      "max_length": 500
+    },
+    {
+      "name": "category",
+      "type": "string",
+      "description": "所属类目，保留完整类目路径。",
+      "required": false,
+      "dimension": true,
+      "max_length": 2000
+    },
+    {
+      "name": "paid_amount",
+      "type": "decimal",
+      "description": "支付金额；缺失值保留NULL。",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "invalid_order_amount",
+      "type": "decimal",
+      "description": "无效单金额；缺失值保留NULL。",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "total_success_refund_amount",
+      "type": "decimal",
+      "description": "退款成功日全部退款金额，包含无效单；缺失值保留NULL。",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "valid_refund_amount",
+      "type": "decimal",
+      "description": "有效成功退款金额，保留代发；缺失值保留NULL。",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "pre_ship_refund_amount",
+      "type": "decimal",
+      "description": "有效发货前成功退款金额；缺失值保留NULL。",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "post_ship_refund_amount",
+      "type": "decimal",
+      "description": "有效发货后成功退款金额；缺失值保留NULL。",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "gross_profit",
+      "type": "decimal",
+      "description": "BI毛利额原值，按来源保存，不重新计算；缺失值保留NULL。",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "net_goods_cost_pay",
+      "type": "decimal",
+      "description": "净货品成本（支付口径）；缺失值保留NULL。",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "sales_fee_pay_est",
+      "type": "decimal",
+      "description": "销售费用（支付口径预估）；缺失值保留NULL。",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "ship_fee_pay",
+      "type": "decimal",
+      "description": "发货费用（支付口径）；缺失值保留NULL。",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "other_fee_pay",
+      "type": "decimal",
+      "description": "其他费用（支付口径）；缺失值保留NULL。",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "custom_fee",
+      "type": "decimal",
+      "description": "自定义费用；缺失值保留NULL。",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "ad_cost_est",
+      "type": "decimal",
+      "description": "支付订单预估推广费，仅用于展示分析；缺失值保留NULL。",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "bill_cost",
+      "type": "decimal",
+      "description": "平台花费账单，仅用于展示分析；缺失值保留NULL。",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "fee_cost_2",
+      "type": "decimal",
+      "description": "成本快递补充，仅用于展示；缺失值保留NULL。",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "paid_units",
+      "type": "integer",
+      "description": "支付件数；缺失值保留NULL。",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "paid_orders",
+      "type": "integer",
+      "description": "支付订单笔数；缺失值保留NULL。",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "paid_buyers",
+      "type": "integer",
+      "description": "商品日支付人数；跨商品或跨日相加不代表去重人数；缺失值保留NULL。",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "invalid_order_orders",
+      "type": "integer",
+      "description": "无效单订单笔数；缺失值保留NULL。",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "gross_orders",
+      "type": "integer",
+      "description": "支付订单笔数减无效单订单笔数，按来源结果保存；缺失值保留NULL。",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    },
+    {
+      "name": "gross_buyers",
+      "type": "integer",
+      "description": "排除无效单后的商品日去重人数，普通单包含代发；跨商品或跨日相加不代表去重人数；缺失值保留NULL。",
+      "required": false,
+      "dimension": false,
+      "max_length": 255
+    }
+  ],
+  "retention_days": 180
+}
