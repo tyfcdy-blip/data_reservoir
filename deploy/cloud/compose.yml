@@ -1,0 +1,89 @@
+name: muyaju-data-reservoir
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+x-app: &app
+  image: ${DS_APP_IMAGE:?填写已验证且唯一的应用镜像版本，不能沿用旧1.6.0标签}
+  env_file: .env
+  environment:
+    DS_DATABASE_URL: ${DS_DOCKER_DATABASE_URL:?填写独立恢复库的连接地址}
+    DS_ROOT_PATH: /data-service
+    DS_SOURCE_CONFIG_PATH: /app/config/sources.json
+    DS_DATASET_CONFIG_PATH: /app/config/datasets.json
+    TZ: Asia/Shanghai
+  volumes:
+    - ./config:/app/config:ro
+  networks:
+    - database
+  restart: unless-stopped
+  logging: *logging
+  depends_on:
+    db:
+      condition: service_healthy
+
+services:
+  db:
+    image: ${DS_POSTGRES_IMAGE:-postgres:17-bookworm}
+    environment:
+      POSTGRES_DB: data_service_bootstrap
+      POSTGRES_USER: ${POSTGRES_USER:?填写数据库用户名}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?填写数据库密码}
+      TZ: Asia/Shanghai
+    volumes:
+      - database:/var/lib/postgresql/data
+    networks:
+      - database
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d data_service_bootstrap"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+    logging: *logging
+
+  api:
+    <<: *app
+    profiles: [serve]
+    command:
+      - uvicorn
+      - data_service.api:create_app
+      - --factory
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+      - --no-access-log
+      - --root-path
+      - /data-service
+      - --proxy-headers
+      - --forwarded-allow-ips
+      - ${DS_TRUSTED_PROXY_IPS:?填写nginx在basic_basic_net中的实际IP，不使用星号}
+    networks:
+      database:
+      ingress:
+        aliases: [muyaju-data-reservoir-api]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready',timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  worker:
+    <<: *app
+    profiles: [sync]
+    command: [python, -m, data_service.worker]
+
+volumes:
+  database:
+    name: muyaju-data-reservoir-pg17
+
+networks:
+  # 普通桥接网络保留出网能力，使worker可以调用获准的数据源。
+  database:
+  ingress:
+    external: true
+    name: basic_basic_net

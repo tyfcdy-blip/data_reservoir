@@ -16,6 +16,16 @@ dist/
 /evidence/*
 !/evidence/.gitkeep
 
+# 云部署目录仅跟踪模板和验证脚本，防止上传实际接入配置及备份。
+/deploy/cloud/*
+!/deploy/cloud/compose.yml
+!/deploy/cloud/.env.example
+!/deploy/cloud/nginx-location.conf
+!/deploy/cloud/database-transfer.sh
+!/deploy/cloud/test_deployment.py
+!/deploy/cloud/verify-isolated-transfer.py
+*.partial
+
 # 历史测试产物不作为源码上传。
 *.log
 *.xml

@@ -1,6 +1,7 @@
 """按环境隔离配置，读取不触发数据库或网络操作。"""
 
 from functools import lru_cache
+import re
 from urllib.parse import urlsplit
 
 from pydantic import Field, ValidationError, field_validator
@@ -11,6 +12,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="DS_", extra="ignore", hide_input_in_errors=True)
 
     database_url: str = Field(repr=False)
+    root_path: str = ""
     admin_username: str = Field(default="admin", min_length=1, max_length=64)
     admin_password: str | None = Field(default=None, repr=False, min_length=12, max_length=1024)
     session_hours: int = Field(default=8, ge=1, le=24)
@@ -23,6 +25,16 @@ class Settings(BaseSettings):
     schedule_hour: int = Field(default=3, ge=0, le=23)
     refresh_days: int = Field(default=7, ge=1, le=180)
     config_encryption_key: str | None = Field(default=None, repr=False)
+
+    @field_validator("root_path")
+    @classmethod
+    def deployment_prefix(cls, value: str) -> str:
+        """仅接受明确部署路径，拒绝协议、转义和路径穿越，避免生成站外链接。"""
+        if value in ("", "/"):
+            return ""
+        if len(value) > 200 or not re.fullmatch(r"(?:/[A-Za-z0-9_-]+)+/?", value):
+            raise ValueError("服务路径须为 /data-service 形式，不允许空段、查询参数或转义字符")
+        return value.rstrip("/")
 
     @field_validator("config_encryption_key", mode="before")
     @classmethod

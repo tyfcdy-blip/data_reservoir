@@ -15,10 +15,14 @@ ROOT_FILES = (
     "requirements.lock", ".env.example", ".gitignore", ".gitattributes", ".dockerignore",
 )
 CODE_SUFFIXES = {".py", ".sql", ".html", ".css", ".js", ".mjs", ".cjs", ".yml", ".yaml", ".svg"}
+DEPLOY_FILES = ("deploy/cloud/compose.yml", "deploy/cloud/.env.example",
+                "deploy/cloud/nginx-location.conf", "deploy/cloud/database-transfer.sh",
+                "deploy/cloud/test_deployment.py", "deploy/cloud/verify-isolated-transfer.py")
 
 
 def source_files(root: Path) -> list[Path]:
     selected = [root / name for name in ROOT_FILES if (root / name).is_file()]
+    selected.extend(root / name for name in DEPLOY_FILES if (root / name).is_file())
     for folder in ("data_service", "scripts", "tests"):
         selected.extend(path for path in (root / folder).rglob("*")
                         if path.is_file() and path.suffix in CODE_SUFFIXES
@@ -37,7 +41,7 @@ def source_files(root: Path) -> list[Path]:
 
 def local_secrets(root: Path) -> list[bytes]:
     secrets = []
-    for env in (root / ".env", root / ".local/e2e.env"):
+    for env in (root / ".env", root / ".local/e2e.env", root / "deploy/cloud/.env"):
         if env.exists():
             secrets.extend(value.encode() for key, value in dotenv_values(env).items()
                            if value and len(value) >= 12 and re.search("PASSWORD|SECRET|TOKEN|KEY|URL", key))

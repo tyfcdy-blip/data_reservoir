@@ -29,7 +29,7 @@ def test_fresh_clone_creates_empty_config_and_valid_key(project):
     initialize(project)
     assert json.loads((project / "config/datasets.json").read_text()) == []
     assert json.loads((project / "config/sources.json").read_text()) == {"sources": []}
-    values = dict(line.split("=", 1) for line in (project / ".env").read_text().splitlines()
+    values = dict(line.split("=", 1) for line in (project / ".env").read_text(encoding="utf-8").splitlines()
                   if "=" in line and not line.startswith("#"))
     assert len(base64.urlsafe_b64decode(values["DS_CONFIG_ENCRYPTION_KEY"])) == 32
     assert values["DS_ADMIN_PASSWORD"] and values["POSTGRES_PASSWORD"]

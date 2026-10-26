@@ -80,6 +80,7 @@ def _public_dataset(record: dict) -> dict:
 
 def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings or get_settings()
+    # 代理前缀由 Uvicorn --root-path 写入完整 ASGI scope，保证静态挂载正确解析。
     app = FastAPI(title="慕雅居独立数据服务", version="1.6.0", docs_url=None, redoc_url=None)
     app.state.settings = settings
     app.add_middleware(BodyLimitMiddleware, max_bytes=settings.max_request_bytes)
@@ -92,7 +93,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         response.headers["X-Request-ID"] = str(uuid.uuid4())
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["Referrer-Policy"] = "same-origin"
-        if request.url.path.startswith("/admin"):
+        if request.url.path.removeprefix(settings.root_path).startswith("/admin"):
             response.headers["Content-Security-Policy"] = (
                 "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; "
                 "img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; "
@@ -154,9 +155,15 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/", tags=["说明"])
     def home(request: Request):
         if "text/html" in request.headers.get("accept", ""):
-            return RedirectResponse("/admin/", status_code=307)
-        return success({"service": "慕雅居独立数据服务", "version": "1.6.0", "docs": "/docs", "admin": "/admin/",
-                        "openapi": "/openapi.json", "dashboard_included": False})
+            return RedirectResponse(settings.root_path + "/admin/", status_code=307)
+        return success({"service": "慕雅居独立数据服务", "version": "1.6.0",
+                        "docs": settings.root_path + "/docs", "admin": settings.root_path + "/admin/",
+                        "openapi": settings.root_path + "/openapi.json", "dashboard_included": False})
+
+    @app.get("/admin", include_in_schema=False)
+    def admin_entry():
+        # 用站内路径跳转，避免 TLS 在代理终止后出现 http 降级或丢失部署前缀。
+        return RedirectResponse(settings.root_path + "/admin/", status_code=307)
 
     @app.get("/health/live", tags=["健康检查"])
     def live():
@@ -275,10 +282,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/docs", include_in_schema=False, response_class=HTMLResponse)
     def local_docs():
         paths = app.openapi()["paths"]
-        rows = "".join("<tr><td>" + escape(method.upper()) + "</td><td><code>" + escape(path)
+        rows = "".join("<tr><td>" + escape(method.upper()) + "</td><td><code>" + escape(settings.root_path + path)
                        + "</code></td><td>" + escape(operation.get("summary", "")) + "</td></tr>"
                        for path, methods in paths.items() for method, operation in methods.items())
-        return """<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>慕雅居数据服务接口</title>
+        document = """<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>慕雅居数据服务接口</title>
         <style>body{font:16px/1.7 system-ui;margin:40px auto;max-width:1100px;padding:0 24px;color:#142b42}
         table{border-collapse:collapse;width:100%}td,th{border:1px solid #dce4ec;padding:8px;text-align:left}
         code{color:#195fa6}a{color:#195fa6}</style><h1>慕雅居独立数据服务</h1>
@@ -288,11 +295,15 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         <p><a href="/admin/">进入管理员配置后台</a> · <a href="/openapi.json">下载完整OpenAPI定义</a>，可导入 Apifox / Postman 等接口工具。
         完整请求样例与部署步骤见项目README及docs/api-contract.md。</p>
         <table><tr><th>方法</th><th>路径</th><th>操作</th></tr>""" + rows + "</table></html>"
+        return document.replace('href="/admin/"', f'href="{settings.root_path}/admin/"').replace(
+            'href="/openapi.json"', f'href="{settings.root_path}/openapi.json"')
 
     def openapi_schema():
         if app.openapi_schema:
             return app.openapi_schema
         schema = get_openapi(title=app.title, version=app.version, routes=app.routes)
+        if settings.root_path:
+            schema["servers"] = [{"url": settings.root_path}]
         schema.setdefault("components", {})["securitySchemes"] = {
             "AdminSession": {"type": "http", "scheme": "bearer", "description": "管理员登录返回的短期会话"},
             "DatasetKey": {"type": "apiKey", "in": "header", "name": "X-API-Key",

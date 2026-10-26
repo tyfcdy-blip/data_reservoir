@@ -46,6 +46,8 @@ def test_fresh_package_creates_directories_and_contains_code(project):
     ".env", ".local/consumer-key.json", "config/source.json", "evidence/report.json",
     "tests/check/browser-result.json", "tests/check/output.log", "tests/check/result.xml",
     "tests/check/screen.png", "docs/部署文档.docx", "backups/database.dump",
+    "deploy/cloud/.env", "deploy/cloud/config/sources.json", "deploy/cloud/final.dump",
+    "deploy/cloud/nginx-backup.conf",
 ])
 def test_runtime_files_and_generated_results_are_excluded(project, name):
     write(project, name, "private runtime data")
@@ -80,6 +82,19 @@ def test_known_secret_in_source_refused_before_archive_is_created(project):
         module.build_package(project)
     assert secret not in str(failure.value)
     assert not (project / "dist").exists()
+
+
+def test_cloud_templates_included_but_known_cloud_secret_rejected(project):
+    for name in module.DEPLOY_FILES:
+        write(project, name, "# empty template\n")
+    module.build_package(project)
+    assert all(name in archive_contents(project) for name in module.DEPLOY_FILES)
+    secret = "synthetic-cloud-only-secret-for-validation"
+    write(project, "deploy/cloud/.env", "POSTGRES_PASSWORD=" + secret)
+    write(project, "deploy/cloud/compose.yml", "password: " + secret)
+    with pytest.raises(ValueError, match="deploy/cloud/compose.yml") as failure:
+        module.build_package(project)
+    assert secret not in str(failure.value)
 
 
 @pytest.mark.parametrize("version", ["../../outside", "", "1.6.0/evil"])

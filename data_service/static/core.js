@@ -1,4 +1,13 @@
-export const state = { token: sessionStorage.getItem('data-service-session') || '', datasets: [], status: null };
+// 以模块实际地址定位服务根目录，兼容根路径及反向代理剥离前缀的部署。
+const serviceRoot = new URL('../', import.meta.url);
+const servicePrefix = serviceRoot.pathname.replace(/\/$/, '');
+const sessionKey = servicePrefix ? `data-service-session:${servicePrefix}` : 'data-service-session';
+export function servicePath(path) {
+  if (typeof path !== 'string' || !path.startsWith('/') || path.startsWith('//') || path.includes('\\')) throw new Error('服务路径无效');
+  return servicePrefix + path;
+}
+export const serviceUrl = path => new URL(servicePath(path), serviceRoot.origin).href;
+export const state = { token: sessionStorage.getItem(sessionKey) || '', datasets: [], status: null };
 export const esc = value => String(value ?? '').replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
 export const $ = (selector, root = document) => root.querySelector(selector);
 export const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -7,13 +16,13 @@ export const number = value => Number(value || 0).toLocaleString('zh-CN');
 export const dateTime = value => value ? new Date(value).toLocaleString('zh-CN', {hour12:false}) : '—';
 export function day(offset = 0) { const parts = new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()); const value = type => parts.find(part=>part.type===type).value; const date = new Date(`${value('year')}-${value('month')}-${value('day')}T00:00:00Z`); date.setUTCDate(date.getUTCDate()+offset); return date.toISOString().slice(0,10); }
 export const icon = name => `<svg viewBox="0 0 24 24" aria-hidden="true">${({overview:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',tables:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 4 16 4 16 0V5M4 12c0 4 16 4 16 0"/>',sources:'<path d="M8 3v5M16 3v5M5 8h14v3a7 7 0 0 1-14 0V8M12 18v4"/>',services:'<path d="M4 5h16M7 12h10M10 19h4M4 3v4M20 3v4M7 10v4M17 10v4M10 17v4M14 17v4"/>',keys:'<circle cx="8" cy="9" r="5"/><path d="m12 13 8 8m-4-4 3-3m-1 5 3-3"/>',llm:'<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M9 11h.01M15 11h.01M9 16h6M12 2v3"/>',sync:'<path d="M20 8A8 8 0 0 0 6 5L3 8m0-5v5h5M4 16a8 8 0 0 0 14 3l3-3m0 5v-5h-5"/>',plus:'<path d="M12 5v14M5 12h14"/>',close:'<path d="m6 6 12 12M6 18 18 6"/>',menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',arrow:'<path d="M5 12h14m-5-5 5 5-5 5"/>',copy:'<rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V3H3v13h5"/>',logout:'<path d="M9 4H4v16h5m4-13 5 5-5 5m-5-5h11"/>'})[name] || ''}</svg>`;
-export function setToken(token) { state.token = token; if(token) sessionStorage.setItem('data-service-session', token); else sessionStorage.removeItem('data-service-session'); }
+export function setToken(token) { state.token = token; if(token) sessionStorage.setItem(sessionKey, token); else sessionStorage.removeItem(sessionKey); }
 export async function api(path, options = {}) {
   const token = state.token;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), options.timeout || 125000);
   try {
-    const response = await fetch(path, {method:options.method || 'GET',headers:{...(options.body !== undefined ? {'Content-Type':'application/json'} : {}),...(token ? {Authorization:`Bearer ${token}`} : {})},body:options.body === undefined ? undefined : JSON.stringify(options.body),signal:controller.signal,credentials:'same-origin',cache:'no-store'});
+    const response = await fetch(servicePath(path), {method:options.method || 'GET',headers:{...(options.body !== undefined ? {'Content-Type':'application/json'} : {}),...(token ? {Authorization:`Bearer ${token}`} : {})},body:options.body === undefined ? undefined : JSON.stringify(options.body),signal:controller.signal,credentials:'same-origin',cache:'no-store'});
     const payload = await response.json().catch(() => null);
     if (!response.ok) {
       if(response.status === 401 && token === state.token && path !== '/api/v1/auth/login') { setToken(''); window.dispatchEvent(new Event('session-expired')); }
